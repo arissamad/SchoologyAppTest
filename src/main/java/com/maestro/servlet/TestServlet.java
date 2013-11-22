@@ -7,6 +7,8 @@ import javax.servlet.*;
 import javax.servlet.annotation.*;
 import javax.servlet.http.*;
 
+import org.apache.commons.codec.binary.*;
+
 
 /**
  * Any request path that is not recognized by another servlet (such as ApiServlet) will come here.
@@ -28,8 +30,17 @@ public class TestServlet extends HttpServlet {
 		System.out.println("URL: " + request.getRequestURL().toString());
 		System.out.println("URI: " + request.getRequestURI());
 		System.out.println("PI: " + request.getPathInfo());
-		System.out.println("SAML: " + request.getParameter("SAMLResponse"));
 		
+		String samlResponse = request.getParameter("SAMLResponse");
+		System.out.println("SAML: " + samlResponse);
+		
+		if(samlResponse != null && samlResponse.length() > 0) {
+			byte[] samlBytes = Base64.decodeBase64(samlResponse.getBytes());
+			String samlStr = new String(samlBytes, "UTF-8");
+			
+			System.out.println("SAML Decoded:\n" + samlStr);
+			System.out.println("\n");
+		}
 		
 		Enumeration<String> en = request.getParameterNames();
 		
