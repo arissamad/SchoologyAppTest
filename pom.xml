@@ -38,13 +38,7 @@
 	</repositories>
 	
 	<dependencies>
-	
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml</artifactId>
-			<version>2.6.0</version>
-		</dependency>
-	
+
 		<dependency>
 			<groupId>com.sirra</groupId>
 			<artifactId>sirra-appcore</artifactId>
@@ -143,6 +137,19 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>
 			<version>1.1.1</version>
+		</dependency>
+		
+		
+		<!-- For the Schoology Integration -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.5</version>
 		</dependency>
 		
 	</dependencies>
