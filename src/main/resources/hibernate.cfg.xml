@@ -1,0 +1,21 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+        
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://ec2-107-21-112-215.compute-1.amazonaws.com:5432/d2m41ilvbe9pb7?ssl=true&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory</property>
+         
+        <property name="hibernate.dialect">com.sirra.server.persistence.SirraPostgresDialect</property>
+        
+        <!-- Without this, hibernate takes a minute to load meta data from heroku postgres -->
+        <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
+        
+        <property name="hibernate.connection.username">dgntmaseywssla</property>
+        <property name="hibernate.connection.password">8pIEVeoMJ6QoBlJ48yaP4VLAGG</property>
+        <property name="hbm2ddl.auto">update</property> <!-- update -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+    </session-factory>
+</hibernate-configuration>
