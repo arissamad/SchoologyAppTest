@@ -6,8 +6,18 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.annotation.*;
 import javax.servlet.http.*;
+import javax.xml.parsers.*;
 
 import org.apache.commons.codec.binary.*;
+import org.opensaml.*;
+import org.opensaml.saml2.core.*;
+import org.opensaml.xml.*;
+import org.opensaml.xml.Configuration;
+import org.opensaml.xml.io.*;
+import org.opensaml.xml.signature.*;
+import org.w3c.dom.*;
+
+import com.sirra.appcore.util.*;
 
 
 /**
@@ -22,7 +32,7 @@ import org.apache.commons.codec.binary.*;
 public class TestServlet extends HttpServlet {
 
 	@Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    protected void doGet(HttpServletRequest request, HttpServletResponse response2) throws ServletException, IOException
     {
 		System.out.println("GET: This is /test.me");
 		
@@ -32,7 +42,7 @@ public class TestServlet extends HttpServlet {
 		System.out.println("PI: " + request.getPathInfo());
 		
 		String samlResponse = request.getParameter("SAMLResponse");
-		System.out.println("SAML: " + samlResponse);
+		//System.out.println("SAML: " + samlResponse);
 		
 		if(samlResponse != null && samlResponse.length() > 0) {
 			byte[] samlBytes = Base64.decodeBase64(samlResponse.getBytes());
@@ -40,23 +50,53 @@ public class TestServlet extends HttpServlet {
 			
 			System.out.println("SAML Decoded:\n" + samlStr);
 			System.out.println("\n");
-		}
-		
-		Enumeration<String> en = request.getParameterNames();
-		
-		while(en.hasMoreElements()) {
-			String name = en.nextElement();
-			System.out.println("  Name: " + name);
-			System.out.println("  Value: " + request.getParameter(name));
-		}
-		
-		System.out.println("\nHeaders");
-		Enumeration<String> headers = request.getHeaderNames();
-		
-		while(headers.hasMoreElements()) {
-			String name = headers.nextElement();
-			System.out.println("  HEADER name: " + name);
-			System.out.println("  HEADER value: " + request.getHeader(name));
+			
+			try {
+				DefaultBootstrap.bootstrap();
+				
+				ByteArrayInputStream is = new ByteArrayInputStream(samlStr.getBytes());
+
+				DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+				documentBuilderFactory.setNamespaceAware(true);
+				DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+
+				Document document = docBuilder.parse(is);
+				Element element = document.getDocumentElement();
+				
+				
+				UnmarshallerFactory unmarshallerFactory = Configuration.getUnmarshallerFactory();
+				Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(element);
+				XMLObject responseXmlObj = unmarshaller.unmarshall(element);
+				
+				Response response = (Response) responseXmlObj;
+				
+				List<Assertion> assertions = response.getAssertions();
+				
+				System.out.println("Num of assertions: " + assertions.size());
+				
+				Assertion assertion = assertions.get(0);
+				
+				String subject = assertion.getSubject().getNameID().getValue();
+				String issuer = assertion.getIssuer().getValue();
+				
+				String audience = assertion.getConditions().getAudienceRestrictions().get(0).getAudiences().get(0).getAudienceURI();
+				String statusCode = response.getStatus().getStatusCode().getValue();
+				
+				System.out.println("Subject: " + subject);
+				System.out.println("Issuer: " + issuer);
+				System.out.println("Audience: " + audience);
+				System.out.println("Status code: " + statusCode);
+				
+				Signature sig = response.getSignature();
+				
+				System.out.println("Sig: " + sig);
+				
+				//SignatureValidator validator = new SignatureValidator(credential);
+				//validator.validate(sig);
+				
+			} catch(Exception e) {
+				System.out.println("Error: " + ExceptionUtil.getStackTrace(e));
+			}
 		}
 		
 		StringBuffer jb = new StringBuffer();
