@@ -91,6 +91,18 @@ public class TestServlet extends HttpServlet {
 				
 				System.out.println("Sig: " + sig);
 				
+				List<Attribute> attributes = assertion.getAttributeStatements().get(0).getAttributes();
+				
+				for(Attribute attribute: attributes) {
+					String name = attribute.getName();
+					String friendlyName = attribute.getFriendlyName();
+					String value = attribute.getAttributeValues().get(0).getDOM().getTextContent();
+					
+					System.out.println("Found attribute " + name);
+					System.out.println("  Friendly name: " + friendlyName);
+					System.out.println("  Value: " + value);
+				}
+				
 				//SignatureValidator validator = new SignatureValidator(credential);
 				//validator.validate(sig);
 				
@@ -98,21 +110,6 @@ public class TestServlet extends HttpServlet {
 				System.out.println("Error: " + ExceptionUtil.getStackTrace(e));
 			}
 		}
-		
-		StringBuffer jb = new StringBuffer();
-		String line = null;
-		try {
-			BufferedReader reader = request.getReader();
-			
-			if(reader != null) {
-				while ((line = reader.readLine()) != null) {
-				      jb.append(line);
-				}
-			}
-			
-		} catch (Exception e) { /*report an error*/ }
-
-		System.out.println("POST body: " + jb.toString());
     }
 	
 	@Override
