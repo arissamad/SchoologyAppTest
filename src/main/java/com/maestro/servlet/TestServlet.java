@@ -47,12 +47,27 @@ public class TestServlet extends HttpServlet {
 			System.out.println("  HEADER name: " + name);
 			System.out.println("  HEADER value: " + request.getHeader(name));
 		}
+		
+		StringBuffer jb = new StringBuffer();
+		String line = null;
+		try {
+			BufferedReader reader = request.getReader();
+			
+			if(reader != null) {
+				while ((line = reader.readLine()) != null) {
+				      jb.append(line);
+				}
+			}
+			
+		} catch (Exception e) { /*report an error*/ }
+
+		System.out.println("POST body: " + jb.toString());
     }
 	
 	@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
 		System.out.println("POST: This is /test.me");
-		
+		doGet(request, response);
     }
 }
