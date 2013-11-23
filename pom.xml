@@ -146,13 +146,20 @@
 			<artifactId>opensaml</artifactId>
 			<version>2.6.0</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.5</version>
 		</dependency>
-		
-	</dependencies>
+
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client</artifactId>
+			<version>1.17.0-rc</version>
+		</dependency>
+
+</dependencies>
 	
 	<build>
 	<plugins>

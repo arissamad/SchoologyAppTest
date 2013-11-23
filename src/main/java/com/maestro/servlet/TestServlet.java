@@ -17,7 +17,9 @@ import org.opensaml.xml.io.*;
 import org.opensaml.xml.signature.*;
 import org.w3c.dom.*;
 
+import com.maestro.api.schoology.support.*;
 import com.sirra.appcore.util.*;
+import com.sirra.server.session.*;
 
 
 /**
@@ -93,23 +95,32 @@ public class TestServlet extends HttpServlet {
 				
 				List<Attribute> attributes = assertion.getAttributeStatements().get(0).getAttributes();
 				
+				Map<String, String> attributeMap = new HashMap();
+				
 				for(Attribute attribute: attributes) {
 					String name = attribute.getName();
-					String friendlyName = attribute.getFriendlyName();
 					String value = attribute.getAttributeValues().get(0).getDOM().getTextContent();
 					
 					System.out.println("Found attribute " + name);
-					System.out.println("  Friendly name: " + friendlyName);
 					System.out.println("  Value: " + value);
+					
+					attributeMap.put(name, value);
 				}
 				
+				SchoologyUser schoologyUser = new SchoologyUser(attributeMap);
+				
+				System.out.println("Got Schoology User!");
 				//SignatureValidator validator = new SignatureValidator(credential);
 				//validator.validate(sig);
 				
 			} catch(Exception e) {
 				System.out.println("Error: " + ExceptionUtil.getStackTrace(e));
 			}
+			
 		}
+
+		response2.getWriter().write("This is the SAML ACS URL. Random: " + Math.round(Math.random()*1000));
+		
     }
 	
 	@Override
